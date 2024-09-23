@@ -20,11 +20,11 @@ namespace JsonDecode{
             FwByteData.Add(0x31);
             FwByteData.Add(0x42);
 
-            byte header = FwByteData[0];
+            
 
             #region json deserialization
             
-            string filePath = "D:\\Apps\\JSONPacketDecode\\SampleJSON.json";  // Path to your JSON file
+            string filePath = "D:\\Apps\\JSONPacketDecode\\JSONPacketDecode\\SampleJSON.json";  // Path to your JSON file
 
             string json = File.ReadAllText(filePath);  // Read the JSON file
 
@@ -33,10 +33,27 @@ namespace JsonDecode{
 
             foreach (var packet in rootObject.Packets)
             {
+                byte header = FwByteData[0];
                 string headertoHex = "0x" + header.ToString("X2");
                 if(headertoHex == packet.Header)
                 {
-                    Dictionary<string, Dictionary<uint, uint[]>> pkt_field_Bitrange = decoderobj.DecoderMethod(packet);
+                    Dictionary<string, Dictionary<uint, BitMsbLsb>> pkt_field_Bitrange = decoderobj.DecoderMethod(packet);
+                    if (FwByteData.Count > 1)
+                    {
+                        foreach (var kvp in pkt_field_Bitrange)  // Iterate over the outer dictionary
+                        {
+                            string payload_name = kvp.Key;
+                            Dictionary<uint, BitMsbLsb> bitInfoDict = kvp.Value;
+                            if(bitInfoDict.Count == 1)
+                            {
+                                decoderobj.PayloadDecodeShifting(decoderobj, FwByteData, bitInfoDict);
+                            }
+                            else
+                            {
+                                decoderobj.PayloadDecodeShiftingForMultipleBytes(decoderobj, FwByteData, bitInfoDict);
+                            }
+                        }
+                    }
                 }
             }
 
@@ -60,6 +77,8 @@ namespace JsonDecode{
             }
             #endregion
         }
+
+        
     }
 }
 
