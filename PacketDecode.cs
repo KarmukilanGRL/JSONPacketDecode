@@ -49,7 +49,7 @@ namespace JSONPacketDecode
         public uint bit_msb { get; set; }
         public uint[] bit_lsbmsb { get; set; }
 
-        public BitMsbLsb(uint by, uint bitlsb, uint bitmsb)
+        public BitMsbLsb(uint by, uint bitmsb, uint bitlsb)
         {
             bytevalue = by;
             bit_lsb = bitlsb;
