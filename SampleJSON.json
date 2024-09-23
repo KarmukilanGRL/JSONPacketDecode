@@ -1,0 +1,195 @@
+{
+    "SpecVersion": "2.1",
+    "Packets": [
+        {
+            "PacketName": "Auxiliary Data Control (ADC)",
+            "Header": "0x25",
+            "Fields": [
+                {
+                    "FieldName": "Request",
+                    "BitRange": "B0-b7:b3",
+                    "Description": "Represents the request field, covering bits b3 to b7 of Byte 0.",
+                    "Max": 31,
+                    "Min": 0
+                },
+                {
+                    "FieldName": "Parameter",
+                    "BitRange": "B0-b2:b0|B1-b7:b0",
+                    "Description": "Represents the parameter field, covering bits b2 to b0 of Byte 0 and all bits of Byte 1.",
+                    "Max": 2047,
+                    "Min": 0
+                }
+            ]
+        },
+        {
+            "PacketName": "Auxiliary Data Transport (ADT)",
+            "Header": "Multiple header codes",
+            "Fields": [
+                {
+                    "FieldName": "Data",
+                    "BitRange": "B0-b7:b0",
+                    "Description": "Represents the data field, covering all bits b7 to b0 of Byte 0 and subsequent bytes.",
+                    "Max": 255,
+                    "Min": 0
+                }
+            ]
+        },
+        {
+            "PacketName": "Data Not Available (NULL)",
+            "Header": "0x00",
+            "Fields": [
+                {
+                    "FieldName": "Reserved",
+                    "BitRange": "B0-b7:b0",
+                    "Description": "Reserved byte, covering all bits b7 to b0 of Byte 0. All reserved bits should be set to ZERO.",
+                    "Max": 255,
+                    "Min": 0
+                }
+            ]
+        },
+        {
+            "PacketName": "Power Transmitter Capabilities (CAP)",
+            "Header": "0x31",
+            "Fields": [
+                {
+                    "FieldName": "Negotiable Load Power",
+                    "BitRange": "B0-b5:b0",
+                    "Description": "Represents the negotiable load power, covering bits b5 to b0 of Byte 0.",
+                    "Max": 63,
+                    "Min": 0
+                },
+                {
+                    "FieldName": "Reserved",
+                    "BitRange": "B0-b7:b6",
+                    "Description": "Reserved bits, covering bits b7 to b6 of Byte 0.",
+                    "Max": 3,
+                    "Min": 0
+                },
+                {
+                    "FieldName": "Potential Load Power",
+                    "BitRange": "B1-b5:b0",
+                    "Description": "Represents the potential load power, covering bits b5 to b0 of Byte 1.",
+                    "Max": 63,
+                    "Min": 0
+                },
+                {
+                    "FieldName": "Reserved",
+                    "BitRange": "B1-b7:b6",
+                    "Description": "Reserved bits, covering bits b7 to b6 of Byte 1.",
+                    "Max": 3,
+                    "Min": 0
+                },
+                {
+                    "FieldName": "Dup",
+                    "BitRange": "B2-b7",
+                    "Description": "Represents the Dup field, covering bit b7 of Byte 2.",
+                    "Max": 1,
+                    "Min": 0
+                },
+                {
+                    "FieldName": "AR",
+                    "BitRange": "B2-b6",
+                    "Description": "Represents the AR field, covering bit b6 of Byte 2.",
+                    "Max": 1,
+                    "Min": 0
+                },
+                {
+                    "FieldName": "OB",
+                    "BitRange": "B2-b5",
+                    "Description": "Represents the OB field, covering bit b5 of Byte 2.",
+                    "Max": 1,
+                    "Min": 0
+                },
+                {
+                    "FieldName": "Buffer Size",
+                    "BitRange": "B2-b4:b2",
+                    "Description": "Represents the buffer size, covering bits b4 to b2 of Byte 2.",
+                    "Max": 7,
+                    "Min": 0
+                },
+                {
+                    "FieldName": "WPID",
+                    "BitRange": "B2-b1",
+                    "Description": "Represents the WPID field, covering bit b1 of Byte 2.",
+                    "Max": 1,
+                    "Min": 0
+                },
+                {
+                    "FieldName": "NRS",
+                    "BitRange": "B2-b0",
+                    "Description": "Represents the NRS field, covering bit b0 of Byte 2.",
+                    "Max": 1,
+                    "Min": 0
+                }
+            ]
+        },
+        {
+            "PacketName": "Power Transmitter Extended Capabilities (XCAP)",
+            "Header": "0x32",
+            "Fields": [
+                {
+                    "FieldName": "Reserved",
+                    "BitRange": "B0-b7:b0",
+                    "Description": "Reserved byte, covering all bits b7 to b0 of Byte 0. All reserved bits should be set to ZERO.",
+                    "Max": 255,
+                    "Min": 0
+                },
+                {
+                    "FieldName": "TPS",
+                    "BitRange": "B1-b3",
+                    "Description": "Represents the TPS field, covering bit b3 of Byte 1.",
+                    "Max": 1,
+                    "Min": 0
+                },
+                {
+                    "FieldName": "TDE",
+                    "BitRange": "B1-b2",
+                    "Description": "Represents the TDE field, covering bit b2 of Byte 1.",
+                    "Max": 1,
+                    "Min": 0
+                },
+                {
+                    "FieldName": "TDS",
+                    "BitRange": "B1-b1:b0",
+                    "Description": "Represents the TDS field, covering bits b1 to b0 of Byte 1.",
+                    "Max": 3,
+                    "Min": 0
+                },
+                {
+                    "FieldName": "Reserved",
+                    "BitRange": "B2-b7:b4",
+                    "Description": "Reserved bits, covering bits b7 to b4 of Byte 2.",
+                    "Max": 15,
+                    "Min": 0
+                }
+            ]
+        },
+        {
+            "PacketName": "Power Transmitter Identification (ID)",
+            "Header": "0x30",
+            "Fields": [
+                {
+                    "FieldName": "Major Version",
+                    "BitRange": "B0-b7:b4",
+                    "Description": "Represents the major version, covering bits b7 to b4 of Byte 0. Shall be set to 2.",
+                    "Max": 15,
+                    "Min": 0
+                },
+                {
+                    "FieldName": "Minor Version",
+                    "BitRange": "B0-b3:b0",
+                    "Description": "Represents the minor version, covering bits b3 to b0 of Byte 0. Shall be set to 1.",
+                    "Max": 15,
+                    "Min": 0
+                },
+                {
+                    "FieldName": "Manufacturer Code",
+                    "BitRange": "B1-b7:b0|B2-b7:b0",
+                    "Description": "Represents the manufacturer code, covering all bits b7 to b0 of Byte 1 and Byte 2.",
+                    "Max": 65535,
+                    "Min": 0
+                }
+            ]
+        }
+    ]
+}
