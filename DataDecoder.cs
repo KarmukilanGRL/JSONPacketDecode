@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -73,33 +74,44 @@ namespace JSONPacketDecode
             return (byte)value;
         }
 
-        public void PayloadDecodeShifting(DataDecoder decoderobj, List<byte> FwByteData, Dictionary<uint, BitMsbLsb> bitInfoDict)
+        public (string, byte) PayloadDecodeShifting(List<byte> FwByteData, Dictionary<uint, BitMsbLsb> bitInfoDict)
         {
-            var bitInfo = bitInfoDict.Values.FirstOrDefault();
+            string strbitorder = "";
+            byte itemp = 0;
+            try
+            {
+                var bitInfo = bitInfoDict.Values.FirstOrDefault();
 
-            uint bit_msb = bitInfo.bit_msb;
-            uint bit_lsb = bitInfo.bit_lsb;
-            uint curr_byte = bitInfo.bytevalue;
+                uint bit_msb = bitInfo.bit_msb;
+                uint bit_lsb = bitInfo.bit_lsb;
+                uint curr_byte = bitInfo.bytevalue;
 
-            // to calculate bitrange
-            int bitrange = (int)((bit_msb - bit_lsb) + 1);
+                // to calculate bitrange
+                int bitrange = (int)((bit_msb - bit_lsb) + 1);
 
-            // Create bitorder string
-            string strbitorder = $"[{bit_msb}:{bit_lsb}]";
-            byte idata = FwByteData[(int)curr_byte + 1];
-            byte bytetoAnd = decoderobj.GetByteFromBitrange(bitrange);
+                // Create bitorder string
+                strbitorder = $"[{bit_msb}:{bit_lsb}]";
+                byte idata = FwByteData[(int)curr_byte + 1];
+                byte bytetoAnd = GetByteFromBitrange(bitrange);
 
-            byte itemp = (byte)((idata >> (int)bit_lsb) & bytetoAnd);
+                itemp = (byte)((idata >> (int)bit_lsb) & bytetoAnd);
+            }
+            catch (Exception ex)
+            {
 
-            // Optionally do something with bitorder
-            Console.WriteLine(strbitorder);  // Example usage
-
+            }
+            return (strbitorder, itemp);
         }
 
-        public void PayloadDecodeShiftingForMultipleBytes(DataDecoder decoderobj, List<byte> FwByteData, Dictionary<uint, BitMsbLsb> bitInfoDict)
+        public (string, uint) PayloadDecodeShiftingForMultipleBytes(List<byte> FwByteData, Dictionary<uint, BitMsbLsb> bitInfoDict)
         {
             StringBuilder strbitorder_new = new StringBuilder();
             List<byte> idata = new List<byte>();
+            List<int> shiftValue = new List<int>();
+
+            uint result = 0;
+            int accumulatedShift = 0;
+            byte idata_temp = 0;
 
             for (int i = 0; i < bitInfoDict.Values.Count; i++)
             {
@@ -113,10 +125,27 @@ namespace JSONPacketDecode
                 if (i < bitInfoDict.Values.Count - 1)
                     strbitorder_new.Append($" + ");
 
+                shiftValue.Add((int)(bit_msb - bit_lsb) + 1);
+
+                
+
+                //(_, idata_temp) = PayloadDecodeShifting(FwByteData, ); // to return idata and strbitoder
+                // this fwbytedata shoudl be shifted before adding to idata list
+
                 idata.Add(FwByteData[(int)curr_byte + 1]);
+            }      
+
+            // We iterate backwards because the first byte has the largest shift
+            for (int i = idata.Count - 1; i >= 0; i--)
+            {
+                result |= (uint)(idata[i] << accumulatedShift); // Shift the current byte by the accumulated shift
+                accumulatedShift += shiftValue[i]; // Accumulate the shift for the next byte (if any)
             }
 
             string strbitorder = strbitorder_new.ToString();
+            uint itemp = result;
+
+            return (strbitorder, itemp);
         }
     }
 }
