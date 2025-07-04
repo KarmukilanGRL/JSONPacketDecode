@@ -81,6 +81,10 @@ namespace JSONPacketDecode
             try
             {
                 var bitInfo = bitInfoDict.Values.FirstOrDefault();
+                if (bitInfo == null)
+                {
+                    return (strbitorder, itemp);
+                }
 
                 uint bit_msb = bitInfo.bit_msb;
                 uint bit_lsb = bitInfo.bit_lsb;
@@ -96,7 +100,7 @@ namespace JSONPacketDecode
 
                 itemp = (byte)((idata >> (int)bit_lsb) & bytetoAnd);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
             }
@@ -111,7 +115,7 @@ namespace JSONPacketDecode
 
             uint result = 0;
             int accumulatedShift = 0;
-            byte idata_temp = 0;
+            //byte idata_temp = 0;
 
             for (int i = 0; i < bitInfoDict.Values.Count; i++)
             {
@@ -146,6 +150,21 @@ namespace JSONPacketDecode
             uint itemp = result;
 
             return (strbitorder, itemp);
+        }
+        /// <summary>
+        /// Compares the decoded value with the field's values to get the description and display decription.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="decodedValue"></param>
+        /// <returns></returns>
+        public (string description, string display) GetValueInfo(Field field, uint decodedValue)
+        {
+            if (field.Values != null && field.Values.ContainsKey(decodedValue.ToString()))
+            {
+                var valueInfo = field.Values[decodedValue.ToString()];
+                return (valueInfo.Description, valueInfo.Display);
+            }
+            return ("", ""); // Return empty strings if no matching value found
         }
     }
 }

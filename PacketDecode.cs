@@ -40,6 +40,14 @@ namespace JSONPacketDecode
         public string Description { get; set; }
         public int Max { get; set; }
         public int Min { get; set; }
+        public Dictionary<string, ValueInfo>? Values { get; set; }
+        public bool Displayable { get; set; }
+    }
+
+    public class ValueInfo
+    {
+        public string Description { get; set; } = "";
+        public string Display { get; set; } = "";
     }
 
     public class BitMsbLsb

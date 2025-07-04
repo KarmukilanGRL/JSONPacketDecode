@@ -24,7 +24,7 @@ namespace JsonDecode{
 
             #region json deserialization
             
-            string filePath = "D:\\Apps\\JSONPacketDecode\\JSONPacketDecode\\SampleJSON.json";  // Path to your JSON file
+            string filePath = "C:\\Users\\grlsw\\Downloads\\JSONPacketDecode\\SampleJSON.json";  // Path to your JSON file
 
             string json = File.ReadAllText(filePath);  // Read the JSON file
 
@@ -37,6 +37,7 @@ namespace JsonDecode{
                 string headertoHex = "0x" + header.ToString("X2");
                 if(headertoHex == packet.Header)
                 {
+                    List<string> DisplayPayloadvalues = new();
                     Dictionary<string, Dictionary<uint, BitMsbLsb>> pkt_field_Bitrange = decoderobj.DecoderMethod(packet);
                     if (FwByteData.Count > 1)
                     {
@@ -48,6 +49,10 @@ namespace JsonDecode{
                             byte itemp = 0;
                             string payload_name = kvp.Key;
                             Dictionary<uint, BitMsbLsb> bitInfoDict = kvp.Value;
+                            
+                            // Find the corresponding field in the packet
+                            Field? currentField = packet.Fields.FirstOrDefault(f => f.FieldName == payload_name);
+                            
                             if(bitInfoDict.Count == 1)
                             { 
                                 (strbitorder, itemp) = decoderobj.PayloadDecodeShifting(FwByteData, bitInfoDict); // to return idata and strbitoder
@@ -58,14 +63,42 @@ namespace JsonDecode{
                                 (strbitorder, itempdata) = decoderobj.PayloadDecodeShiftingForMultipleBytes(FwByteData, bitInfoDict);
                                 itemp = (byte)itempdata;
                             }
-
+                            
+                            // Check if the field has Values and get description/display
+                            string valueDescription = "";
+                            string valueDisplay = "";
+                            if (currentField != null)
+                            {
+                                (valueDescription, valueDisplay) = decoderobj.GetValueInfo(currentField, itemp);
+                            }
+                            
+                            // Add to DisplayPayloadvalues based on Displayable flag
+                            if (currentField != null && currentField.Displayable)
+                            {
+                                if (!string.IsNullOrEmpty(valueDisplay))
+                                {
+                                    DisplayPayloadvalues.Add($"{payload_name} : {valueDisplay}");
+                                }
+                                else
+                                {
+                                    DisplayPayloadvalues.Add($"{payload_name} : {itemp}");
+                                }
+                            }
+                            
                             Console.WriteLine($"    Payload Name : {payload_name}");
                             Console.WriteLine($"    Bit Order : {strbitorder}");
                             Console.WriteLine($"    Decoded Value : {itemp}");
+                            
+                            // Display additional info if values are found
+                            if (!string.IsNullOrEmpty(valueDescription))
+                            {
+                                Console.WriteLine($"    Description : {valueDescription}");
+                                Console.WriteLine($"    Display : {valueDisplay}");
+                            }
                             Console.WriteLine($"    ----------------------------------");
                         }
-
-                        
+                        Console.WriteLine($"    Display String : {packet.PacketName}[{packet.Header}] - {{ {string.Join(" | ", DisplayPayloadvalues)} }}");
+                        Console.WriteLine($"    ----------------------------------");
                     }
                 }
             }
